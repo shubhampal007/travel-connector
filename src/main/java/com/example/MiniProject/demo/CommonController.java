@@ -8,4 +8,9 @@ public class CommonController {
     @Autowired
     public ObjectMapper objectMapper;
 
+    @Autowired
+    public ResponseDTO responseDTO;
+
+
+
 }

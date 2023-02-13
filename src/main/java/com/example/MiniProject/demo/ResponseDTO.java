@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Component
+@RequestScope
 public class ResponseDTO {
     private String status;
     @JsonProperty("response_message")
@@ -18,9 +22,28 @@ public class ResponseDTO {
     private String errorCode;
     @JsonProperty("responseData")
     private Object responseData;
-    @JsonProperty("response_type")
-    private String responseType;
+
     private String errorDetails;
+
+    public ResponseDTO() {
+
+    }
+
+    public ResponseDTO(ResponseDTO responseDto) {
+        String responseType=responseDto.getStatus();
+
+        if(responseType!=null) {
+            this.status = responseDto.getStatus();
+        }else
+        {
+            this.status = "FAILURE";
+        }
+        this.message = responseDto.getMessage();
+        this.errorCode = responseDto.getErrorCode();
+        this.responseData = responseDto.getResponseData();
+        this.errorDetails=responseDto.getErrorDetails();
+
+    }
 
     public String getStatus() {
         return status;
@@ -29,6 +52,14 @@ public class ResponseDTO {
     public void setStatus(String status) {
         this.status = status;
     }
+    public void setStatusSuccess() {
+        this.status = "SUCCESS";
+    }
+
+    public void setStatusFailure() {
+        this.status = "FAILURE";
+    }
+
 
     public String getMessage() {
         return message;
@@ -62,14 +93,6 @@ public class ResponseDTO {
         this.responseData = responseData;
     }
 
-    public String getResponseType() {
-        return responseType;
-    }
-
-    public void setResponseType(String responseType) {
-        this.responseType = responseType;
-    }
-
     public String getErrorDetails() {
         return errorDetails;
     }
@@ -78,21 +101,15 @@ public class ResponseDTO {
         this.errorDetails = errorDetails;
     }
 
-//    public ResponseDTO(ResponseDTO responseDto) {
-//        String responseType = responseDto.getStatus();
-//
-//        if (responseType != null) {
-//            this.status = responseDto.getStatus();
-//            this.responseType = responseType.equalsIgnoreCase("SUCCESS") ? "I" : "E";
-//        } else {
-//            this.status = "FAILURE";
-//            this.responseType = "E";
-//        }
-//        this.message = responseDto.getMessage();
-//        // this.apiName = responseDto.getApiName();
-//        this.errorCode = responseDto.getErrorCode();
-//        this.responseData = responseDto.getResponseData();
-//        this.errorDetails = responseDto.getErrorDetails();
-//    }
+    public JSONObject toJsonResponse()
+    {
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("response_status",this.status);
+        jsonObject.put("response_message",(!(this.message==null))?this.message:"");
+        jsonObject.put("response_code",(!(this.errorCode==null))?this.errorCode:"");
+        jsonObject.put("responseData",(!(this.responseData==null))?this.responseData:"");
+        return jsonObject;
 
+
+    }
 }

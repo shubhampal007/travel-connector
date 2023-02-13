@@ -1,7 +1,9 @@
 package com.example.MiniProject.demo.service;
 
+import com.example.MiniProject.demo.ResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,12 +11,13 @@ import java.sql.Date;
 
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
 @Log4j2
-public class RegisterUserImpl {
+public class RegisterUserImpl{
+
     @Autowired
     ObjectMapper objectMapper;
     @Value("${postgres.jdbc.url}")
@@ -24,35 +27,52 @@ public class RegisterUserImpl {
     @Value("${postgres.jdbc.password}")
     private String postgresjdbcPassword;
 
-    public Object doApiImplementation(Map<String,String> requestBody, Map<String,String> httpHeaders){
+    public JSONObject doApiImplementation(Map<String,String> requestBody, Map<String,String> httpHeaders){
         Object obj=null;
+        Boolean finalStatus=false;
 //        ResponseDTO resp=new ResponseDTO(responseDTO);
         try {
             log.info("Request Params: ", objectMapper.writeValueAsString(requestBody));
              obj=performDbOperation(requestBody,httpHeaders);
+             finalStatus=(Boolean) obj;
         }
         catch(Exception e)
-        {
+        {   finalStatus=false;
             e.printStackTrace();
         }
-        return obj;
+        ResponseDTO responseDTO=new ResponseDTO();
+        if(finalStatus)
+        {
+            responseDTO.setStatusSuccess();
+        }
+        else{
+            responseDTO.setStatusFailure();
+            responseDTO.setMessage("User Already Exist");
+
+        }
+        return responseDTO.toJsonResponse();
 
     }
 
-    private Object performDbOperation(Map<String, String> requestBody,Map<String, String> httpHeaders){
+    private Boolean performDbOperation(Map<String, String> requestBody,Map<String, String> httpHeaders){
         Object object=null;
         String query="";
+        HashMap<String, String> map = new HashMap<>();
 
-        query="Select COUNT(1) FROM TB_USER_MST WHERE EMAIL =?";
-        int count=0;
+        query="Select COUNT(*) as value FROM TB_USER_MST WHERE EMAIL =?;  ";
         ResultSet resultSet;
         try (Connection conn = DriverManager.getConnection(postgresjdbcUrl, postgresjdbcUsername, postgresjdbcPassword);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             log.info("Connected to the database!");
             stmt.setString(1, requestBody.get("email").toString());
             resultSet = stmt.executeQuery();
-//          resultSet.next();
-           count= resultSet.getRow();
+            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+
+            while (resultSet.next()) {
+                for (int index = 1; index <= resultSetMetaData.getColumnCount(); index++) {
+                    String columnName = resultSetMetaData.getColumnLabel(index).trim();
+                    map.put(columnName,objectMapper.writeValueAsString(resultSet.getObject(columnName)));                }
+            }
         }
         catch(SQLException e)
         {
@@ -63,17 +83,15 @@ public class RegisterUserImpl {
             e.printStackTrace();
         }
         log.info("Database Connection Closed");
-        if(count==0)
+        if(Integer.parseInt(map.get("value"))==0)
         {
             object=RegisterUser(requestBody,httpHeaders);
-        }
-        else
-        {
-            object="Record Already Exist for username:"+requestBody.get("email");
-        }
+            return true;
 
-        return object;
-
+        }
+        else {
+            return false;
+        }
 }
 
     private Object RegisterUser(Map<String, String> requestBody, Map<String, String> httpHeaders) {
