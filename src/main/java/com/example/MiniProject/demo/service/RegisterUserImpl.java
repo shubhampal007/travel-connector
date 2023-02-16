@@ -1,6 +1,7 @@
 package com.example.MiniProject.demo.service;
 
 import com.example.MiniProject.demo.ResponseDTO;
+import com.example.MiniProject.demo.controller.LoginUserController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
@@ -16,16 +17,9 @@ import java.util.Map;
 
 @Service
 @Log4j2
-public class RegisterUserImpl{
+public class RegisterUserImpl extends CommonServiceClass implements CommonService{
 
-    @Autowired
-    ObjectMapper objectMapper;
-    @Value("${postgres.jdbc.url}")
-    private String postgresjdbcUrl;
-    @Value("${postgres.jdbc.username}")
-    private String postgresjdbcUsername;
-    @Value("${postgres.jdbc.password}")
-    private String postgresjdbcPassword;
+
 
     public JSONObject doApiImplementation(Map<String,String> requestBody, Map<String,String> httpHeaders){
         Object obj=null;
