@@ -1,12 +1,8 @@
 package com.example.MiniProject.demo.service;
 
 import com.example.MiniProject.demo.ResponseDTO;
-import com.example.MiniProject.demo.controller.LoginUserController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.sql.Date;
 
@@ -23,7 +19,7 @@ public class RegisterUserImpl extends CommonServiceClass implements CommonServic
 
     public JSONObject doApiImplementation(Map<String,String> requestBody, Map<String,String> httpHeaders){
         Object obj=null;
-        Boolean finalStatus=false;
+        Boolean finalStatus;
 //        ResponseDTO resp=new ResponseDTO(responseDTO);
         try {
             log.info("Request Params: ", objectMapper.writeValueAsString(requestBody));
@@ -53,7 +49,7 @@ public class RegisterUserImpl extends CommonServiceClass implements CommonServic
         String query="";
         HashMap<String, String> map = new HashMap<>();
 
-        query="Select COUNT(*) as value FROM TB_USER_MST WHERE EMAIL =?;  ";
+        query="Select COUNT(*) as value FROM \"TRAVEL_GURU\".TB_USER_MST WHERE EMAIL =?;  ";
         ResultSet resultSet;
         try (Connection conn = DriverManager.getConnection(postgresjdbcUrl, postgresjdbcUsername, postgresjdbcPassword);
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -89,7 +85,7 @@ public class RegisterUserImpl extends CommonServiceClass implements CommonServic
 }
 
     private Object RegisterUser(Map<String, String> requestBody, Map<String, String> httpHeaders) {
-        String query="insert into tb_user_mst VALUES(?,?,?,?,?,?,?);";
+        String query="insert into \"TRAVEL_GURU\".tb_user_mst VALUES(?,?,?,?,?,?,?);";
         String date=requestBody.get("dob");
 
         try (Connection conn = DriverManager.getConnection(postgresjdbcUrl, postgresjdbcUsername, postgresjdbcPassword);

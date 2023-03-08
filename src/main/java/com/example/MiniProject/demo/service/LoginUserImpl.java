@@ -1,7 +1,6 @@
 package com.example.MiniProject.demo.service;
 
 import com.example.MiniProject.demo.ResponseDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -35,17 +34,11 @@ public class LoginUserImpl extends CommonServiceClass implements CommonService {
     private boolean authenticateLogin(Map<String, String> requestBody) {
         String passwordFromDb=getPasswordFromDB(requestBody);
 
-        if(passwordFromDb.equals(requestBody.get("password")))
-        {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return passwordFromDb.equals(requestBody.get("password"));
     }
 
     private String getPasswordFromDB(Map<String, String> requestBody) {
-        String query="Select userpass from tb_user_mst where email=?";
+        String query="Select userpass from \"TRAVEL_GURU\".tb_user_mst where email=?";
         HashMap<String, String> map = new HashMap<>();
         ResultSet resultSet;
         try (Connection conn = DriverManager.getConnection(postgresjdbcUrl, postgresjdbcUsername, postgresjdbcPassword);
