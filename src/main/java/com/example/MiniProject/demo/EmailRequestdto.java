@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @Setter
 @Component
-public class EmailRequest {
+public class EmailRequestdto {
     @JsonProperty("to")
     private String to;
     @JsonProperty("subject")

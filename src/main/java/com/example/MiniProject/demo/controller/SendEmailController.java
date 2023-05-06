@@ -1,7 +1,7 @@
 package com.example.MiniProject.demo.controller;
 
 import com.example.MiniProject.demo.CommonController;
-import com.example.MiniProject.demo.EmailRequest;
+import com.example.MiniProject.demo.EmailRequestdto;
 import com.example.MiniProject.demo.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class SendEmailController extends CommonController {
     private MailService mailService;
 
     @PostMapping("/sendEmail")
-    public ResponseEntity<String> sendEmail(@RequestBody EmailRequest request) {
+    public ResponseEntity<String> sendEmail(@RequestBody EmailRequestdto request) {
         String to = request.getTo();
         String subject = request.getSubject();
         String body = request.getBody();
