@@ -38,10 +38,10 @@ public class LoginUserImpl extends CommonServiceClass implements CommonService {
     }
 
     private String getPasswordFromDB(Map<String, String> requestBody) {
-        String query="Select userpass from \"TRAVEL_GURU\".tb_user_mst where email=?";
+        String query="Select userpass from tb_user_mst where email=?";
         HashMap<String, String> map = new HashMap<>();
         ResultSet resultSet;
-        try (Connection conn = DriverManager.getConnection(postgresjdbcUrl, postgresjdbcUsername, postgresjdbcPassword);
+        try (Connection conn = DriverManager.getConnection(mysqljdbcUrl, mysqljdbcUsername, mysqljdbcPassword);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             log.info("Connected to the database!");
             stmt.setString(1, requestBody.get("email").toString());

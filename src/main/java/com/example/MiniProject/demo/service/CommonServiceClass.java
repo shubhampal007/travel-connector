@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 public class CommonServiceClass {
     @Autowired
     ObjectMapper objectMapper;
-    @Value("${postgres.jdbc.url}")
-     String postgresjdbcUrl;
-    @Value("${postgres.jdbc.username}")
-     String postgresjdbcUsername;
-    @Value("${postgres.jdbc.password}")
-     String postgresjdbcPassword;
+    @Value("${mysql.jdbc.url}")
+     String mysqljdbcUrl;
+    @Value("${mysql.jdbc.username}")
+     String mysqljdbcUsername;
+    @Value("${mysql.jdbc.password}")
+     String mysqljdbcPassword;
 }

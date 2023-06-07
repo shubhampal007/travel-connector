@@ -49,9 +49,9 @@ public class RegisterUserImpl extends CommonServiceClass implements CommonServic
         String query="";
         HashMap<String, String> map = new HashMap<>();
 
-        query="Select COUNT(*) as value FROM \"TRAVEL_GURU\".TB_USER_MST WHERE EMAIL =?;  ";
+        query="Select COUNT(*) as value FROM TB_USER_MST WHERE EMAIL =?;  ";
         ResultSet resultSet;
-        try (Connection conn = DriverManager.getConnection(postgresjdbcUrl, postgresjdbcUsername, postgresjdbcPassword);
+        try (Connection conn = DriverManager.getConnection(mysqljdbcUrl, mysqljdbcUsername, mysqljdbcPassword);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             log.info("Connected to the database!");
             stmt.setString(1, requestBody.get("email").toString());
@@ -85,10 +85,10 @@ public class RegisterUserImpl extends CommonServiceClass implements CommonServic
 }
 
     private Object RegisterUser(Map<String, String> requestBody, Map<String, String> httpHeaders) {
-        String query="insert into \"TRAVEL_GURU\".tb_user_mst VALUES(?,?,?,?,?,?,?);";
+        String query="insert into tb_user_mst VALUES(?,?,?,?,?,?,?);";
         String date=requestBody.get("dob");
 
-        try (Connection conn = DriverManager.getConnection(postgresjdbcUrl, postgresjdbcUsername, postgresjdbcPassword);
+        try (Connection conn = DriverManager.getConnection(mysqljdbcUrl, mysqljdbcUsername, mysqljdbcPassword);
              PreparedStatement stmt = conn.prepareStatement(query)) {
             log.info("Connected to the database!");
             stmt.setString(1, requestBody.get("email"));
